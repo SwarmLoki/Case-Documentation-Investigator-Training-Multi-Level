@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Documentation Investigator Training — Multi-Level</title>
+<style>
+:root{
+  --bg:#0f1720; --panel:#18232e; --panel2:#1f2d3a; --ink:#e8eef4; --muted:#9fb0c0;
+  --accent:#3ea6ff; --accent2:#25c2a0; --warn:#ffb454; --danger:#ff6b6b;
+  --good:#3ddc97; --line:#2a3a49; --shadow:0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+header{background:linear-gradient(135deg,#12202d,#1b3347);padding:18px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;box-shadow:var(--shadow)}
+header h1{margin:0;font-size:1.25rem;letter-spacing:.3px}
+header .sub{color:var(--muted);font-size:.85rem;margin-top:4px}
+.disclaimer{background:#3a2a12;color:#ffd9a0;border:1px solid #6b4a18;padding:10px 14px;border-radius:8px;font-size:.82rem;margin-top:10px}
+
+.mobile-bar{display:none;position:sticky;top:0;z-index:30;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 14px;align-items:center;gap:10px;box-shadow:var(--shadow)}
+.mobile-bar .menu-btn{background:#12314a;border:1px solid #1f5a86;color:var(--ink);width:38px;height:38px;border-radius:8px;cursor:pointer;font-size:1.1rem;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mobile-bar .mobile-title{flex:1;font-weight:600;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mobile-bar .mobile-progress{font-size:.78rem;color:var(--accent);font-weight:700;background:#0e1922;padding:4px 10px;border-radius:999px;flex-shrink:0}
+
+.layout{display:flex;min-height:calc(100vh - 90px)}
+nav{width:290px;background:var(--panel);border-right:1px solid var(--line);padding:16px 12px;position:sticky;top:90px;height:calc(100vh - 90px);overflow-y:auto;flex-shrink:0}
+nav h2{font-size:.75rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:6px 8px 10px}
+nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:1px solid transparent;color:var(--ink);padding:10px;border-radius:8px;cursor:pointer;font-size:.86rem;margin-bottom:4px;transition:.15s}
+nav button:hover{background:var(--panel2)}
+nav button.active{background:#12314a;border-color:#1f5a86}
+nav button .num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:#2a3a49;font-size:.75rem;font-weight:700;flex-shrink:0}
+nav button.active .num{background:var(--accent);color:#04121f}
+nav button .chk{margin-left:auto;color:var(--good);font-weight:700;display:none}
+nav button.done .chk{display:inline}
+
+.drawer-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:35;opacity:0;pointer-events:none;transition:opacity .25s ease}
+body.drawer-open .drawer-backdrop{opacity:1;pointer-events:auto}
+
+main{flex:1;padding:26px 34px;max-width:1050px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:22px;box-shadow:var(--shadow)}
+.panel h2{margin:0 0 4px;font-size:1.35rem}
+.panel .tag{display:inline-block;background:#12314a;color:#9fd0ff;font-size:.72rem;padding:3px 10px;border-radius:999px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px}
+.panel p{margin:.5em 0}
+.section-label{font-size:.72rem;text-transform:uppercase;letter-spacing:1.2px;color:var(--accent2);font-weight:700;margin:18px 0 8px}
+ul.facts{list-style:none;padding:0;margin:8px 0}
+ul.facts li{padding:6px 0 6px 24px;border-bottom:1px dashed var(--line);position:relative;font-size:.92rem}
+ul.facts li:before{content:"▸";position:absolute;left:4px;color:var(--accent)}
+
+.q-card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.q-card .qtext{font-weight:600;margin-bottom:10px}
+.opt{display:block;width:100%;text-align:left;background:#0e1922;border:1px solid var(--line);color:var(--ink);padding:10px 12px;border-radius:8px;margin-bottom:8px;cursor:pointer;font-size:.9rem;transition:.15s}
+.opt:hover{border-color:var(--accent)}
+.opt.correct{background:#123a2b;border-color:var(--good);color:#bff5dd}
+.opt.wrong{background:#3a1717;border-color:var(--danger);color:#ffc4c4}
+.opt:disabled{cursor:default}
+.feedback{margin-top:8px;font-size:.88rem;padding:10px;border-radius:8px;display:none}
+.feedback.show{display:block}
+.feedback.good{background:#123a2b;border-left:3px solid var(--good)}
+.feedback.bad{background:#3a1717;border-left:3px solid var(--danger)}
+.consequence{margin-top:10px;padding:12px;border-radius:8px;font-size:.86rem;display:none}
+.consequence.show{display:block}
+.consequence.good{background:#123a2b;border-left:3px solid var(--good)}
+.consequence.bad{background:#3a1717;border-left:3px solid var(--danger)}
+
+textarea{width:100%;min-height:80px;background:#0e1922;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:10px;font-family:inherit;font-size:.9rem;resize:vertical}
+.btn{background:var(--accent);color:#04121f;border:none;padding:9px 18px;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem;margin-top:8px;transition:.15s}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+.btn.danger{background:transparent;border:1px solid var(--danger);color:var(--danger)}
+.btn.danger:hover{background:#3a1717;color:#ffc4c4}
+.btn.danger.armed{background:var(--danger);color:#fff;border-color:var(--danger)}
+
+.model-answer{display:none;margin-top:10px;background:#0e2a24;border-left:3px solid var(--accent2);padding:12px;border-radius:8px;font-size:.88rem}
+.model-answer.show{display:block}
+.model-answer strong{color:var(--accent2)}
+
+.missed{background:#2a1a1a;border-left:4px solid var(--danger);border-radius:8px;padding:14px 18px;margin:10px 0}
+.missed ul{margin:6px 0;padding-left:22px}
+.lesson{background:#0e2a24;border-left:4px solid var(--accent2);border-radius:8px;padding:14px 18px;margin-top:14px;font-size:.94rem}
+
+.progress{font-size:.78rem;color:var(--muted);margin-bottom:10px}
+.progress b{color:var(--accent)}
+
+.home-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:16px}
+.home-card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:16px;cursor:pointer;transition:.15s;display:flex;flex-direction:column}
+.home-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.home-card .n{font-size:1.6rem;font-weight:800;color:var(--accent)}
+.home-card .t{font-weight:600;margin:4px 0}
+.home-card .s{font-size:.8rem;color:var(--muted);flex:1}
+.home-card .card-progress{margin-top:10px;font-size:.74rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.home-card .card-progress .dot{width:8px;height:8px;border-radius:50%;background:#2a3a49}
+.home-card .card-progress.done{color:var(--good)}
+.home-card .card-progress.done .dot{background:var(--good)}
+.home-card .card-progress.partial .dot{background:var(--warn)}
+
+.overall-progress{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:16px 0}
+.overall-progress .row{display:flex;justify-content:space-between;align-items:center;font-size:.86rem;margin-bottom:8px}
+.overall-progress .row b{color:var(--accent)}
+.overall-progress .bar{height:8px;background:#0e1922;border-radius:4px;overflow:hidden}
+.overall-progress .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
+
+.pill{display:inline-block;font-size:.7rem;padding:2px 8px;border-radius:999px;background:#2a3a49;color:var(--muted);margin-right:6px}
+.pill.good{background:#123a2b;color:#9ff0c8}
+
+.mode-toggle{display:flex;gap:6px;background:#0e1922;border:1px solid var(--line);border-radius:999px;padding:4px;margin:12px 0;width:max-content}
+.mode-toggle button{background:transparent;border:none;color:var(--muted);padding:6px 14px;border-radius:999px;cursor:pointer;font-size:.8rem;font-weight:600;transition:.15s}
+.mode-toggle button.active{background:var(--accent);color:#04121f}
+.mode-toggle button:hover:not(.active){color:var(--ink)}
+
+.priority-list{margin:8px 0}
+.priority-row{display:grid;grid-template-columns:1fr 70px;gap:8px;align-items:center;margin-bottom:6px;background:#0e1922;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:.88rem}
+.priority-row select{background:#0e1922;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px;font-family:inherit}
+.priority-row.correct{border-color:var(--good)}
+.priority-row.wrong{border-color:var(--danger)}
+.priority-warn{margin-top:8px;padding:8px 10px;background:#3a1717;border-left:3px solid var(--danger);border-radius:6px;font-size:.82rem;color:#ffc4c4}
+
+.self-check{background:#0e1922;border:1px dashed var(--line);border-radius:8px;padding:10px;margin-top:10px;font-size:.82rem}
+.self-check .sc-title{color:var(--accent2);font-weight:700;text-transform:uppercase;letter-spacing:.8px;font-size:.68rem;margin-bottom:6px}
+.self-check label{display:flex;align-items:flex-start;gap:8px;padding:3px 0;cursor:pointer}
+.self-check input{accent-color:var(--accent2);margin-top:2px;flex-shrink:0}
+
+.audit-sentence{background:#0e1922;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:.15s;font-size:.88rem}
+.audit-sentence:hover{border-color:var(--accent)}
+.audit-sentence.flagged{border-color:var(--danger);background:#2a1a1a}
+.audit-sentence .flag-note{display:none;color:#ffb3b3;font-size:.78rem;margin-top:6px;font-style:italic}
+.audit-sentence.flagged .flag-note{display:block}
+.rubric-row{display:grid;grid-template-columns:1fr 110px;gap:10px;align-items:center;margin-bottom:8px;background:#0e1922;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:.88rem}
+.rubric-row .rubric-desc{display:block;color:var(--muted);font-size:.75rem;margin-top:2px}
+.rubric-row input{width:100%;background:#0e1922;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px;text-align:center;font-family:inherit}
+.audit-result{display:none;background:#0e2a24;border-left:4px solid var(--accent2);padding:14px 16px;border-radius:8px;margin-top:12px;font-size:.88rem}
+.audit-result.show{display:block}
+
+.export-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.export-panel{display:none;background:#0e1922;border:1px solid var(--line);border-radius:10px;padding:16px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.78rem;white-space:pre-wrap;max-height:420px;overflow-y:auto;margin-top:12px}
+.export-panel.show{display:block}
+
+@media(max-width:820px){
+  header{position:static}
+  .mobile-bar{display:flex}
+  nav{
+    position:fixed;top:0;left:0;bottom:0;z-index:40;
+    width:290px;height:100vh;height:100dvh;
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+    box-shadow:var(--shadow);
+    padding:18px 12px 24px;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  body.drawer-open nav{transform:translateX(0)}
+  body.drawer-open{overflow:hidden}
+  main{padding:18px 16px;max-width:100%}
+}
+
+@media print{
+  body *{visibility:hidden}
+  .export-panel.show, .export-panel.show *{visibility:visible}
+  .export-panel.show{position:absolute;left:0;top:0;width:100%;padding:18px;margin:0;border:none;background:#fff;color:#000;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11pt;max-height:none;white-space:pre-wrap}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Case Documentation Investigator Training — Multi-Level</h1>
+  <div class="sub">Law Enforcement &amp; Child Welfare Training · Redacted Scenario Simulation</div>
+  <div class="disclaimer">⚠️ All names, places, dates, agencies, and details in this training are fictional composites created for instructional purposes. They do not represent any real person, case, or jurisdiction. Any resemblance to real events is coincidental. This module is intended for authorized professional training use only.</div>
+</header>
+
+<div class="mobile-bar">
+  <button class="menu-btn" onclick="toggleDrawer()" aria-label="Open module menu">☰</button>
+  <div class="mobile-title" id="mobile-title">Start Here</div>
+  <div class="mobile-progress" id="mobile-progress">0/0</div>
+</div>
+
+<div class="drawer-backdrop" onclick="closeDrawer()"></div>
+
+<div class="layout">
+  <nav id="nav"></nav>
+  <main id="main"></main>
+</div>
+
+<script>
+/* ============================================================
+   FICTIONAL CASE DATA — MODULES 1–11
+   All identifiers are synthetic. Do not map to real records.
+   ============================================================ */
+const MODULES = [
+{
+  id:1,
+  title:"The Disclosure",
+  subtitle:"Child Forensic Interview Fundamentals",
+  intro:"You are a child welfare investigator. A 10-year-old student was interviewed at school after a concern call. Read the record below, answer the investigative questions, then review what was missed.",
+  briefing:[
+    "A 10-year-old student, <b>Jordan M.</b>, was called to the school office by a child welfare investigator after the agency received a concern call. The investigator introduced herself, explained her role, and described types of abuse and neglect. Jordan then disclosed that her 17-year-old brother, <b>Tyler R.</b>, \u201ctouches her in wrong spots.\u201d Jordan pointed toward her vaginal area. She said the first incident was when she was six, it happens \u201cevery time he comes over,\u201d and the last time was \u201cthis summer.\u201d She told a 9th-grade friend, <b>Riley E.</b>, and Riley\u2019s mother, <b>Ms. P.</b> She has not told her own mother, <b>Dana R.</b>, and is afraid of getting in trouble.",
+    "The investigator\u2019s notes are paraphrased in a \u201cWorker asked / Jordan stated\u201d format. No forensic interview was scheduled in this record. No medical exam is documented. No law enforcement referral is documented. The mother\u2019s reaction to the disclosure is not recorded."
+  ],
+  keyFacts:[
+    "Child: Jordan M., age 10",
+    "Alleged perpetrator: Tyler R., age 17, lives in another town with his mother",
+    "Disclosure: \u201ctouches her in wrong spots,\u201d vaginal area, first at age 6, last \u201cthis summer\u201d",
+    "Prior disclosures: friend Riley E., Riley\u2019s mother Ms. P.",
+    "Mother not informed of disclosure per record",
+    "No forensic interview, medical exam, or law enforcement referral documented"
+  ],
+  questions:[
+    {type:"mc", q:"The investigator listed types of abuse before asking Jordan whether she was being abused. What is the primary concern with that approach?",
+     options:["It takes too long","It can shape or suggest the child\u2019s answer","It is required by policy","It confuses the child"], correct:1,
+     explain:"Listing specific abuse types before an open-ended invitation can suggest answers to a child and weaken the reliability of the disclosure. Open-ended, non-leading prompts should come first."},
+    {type:"mc", q:"Jordan\u2019s disclosure is recorded in paraphrased \u201cWorker asked / Jordan stated\u201d format. Why is this a documentation problem?",
+     options:["It is too long","It loses the child\u2019s exact words, which may be needed for forensic and legal purposes","It is not signed","It uses first person"], correct:1,
+     explain:"Paraphrase loses the child\u2019s own language, which is critical for forensic interviews, court, and assessing reliability. Verbatim quotes should be preserved whenever possible."},
+    {type:"mc", q:"Which of the following is the most important next step after a child discloses sexual abuse?",
+     options:["Confront the alleged perpetrator","Schedule a forensic interview and medical exam and ensure immediate safety","Tell the mother to handle it","Wait for the child to bring it up again"], correct:1,
+     explain:"The next steps are a forensic interview, a medical exam, immediate safety planning, and coordination with law enforcement. Confronting the alleged perpetrator can contaminate the investigation."},
+    {type:"text", q:"List three open-ended follow-up questions you would ask Jordan that were not asked in the record.",
+     model:"Model answers (any three): \u201cTell me everything that happened the last time.\u201d \u201cWhat did you do after?\u201d \u201cDid he say anything to you?\u201d \u201cDid anyone else see or hear?\u201d \u201cDid he tell you to keep it a secret?\u201d \u201cWhat would you like to happen now?\u201d",
+     selfCheck:["Used at least one open-ended prompt","Avoided leading or suggestive language","Covered what / where / when rather than yes-no"]},
+    {type:"text", q:"Identify three facts in the record that are stated but not verified.",
+     model:"Model answers: Jordan\u2019s age/DOB; Tyler\u2019s age and residence; that she told Riley and Ms. P.; that the first incident was at age six; that the last incident was \u201cthis summer\u201d; the parents\u2019 employment.",
+     selfCheck:["Separated stated facts from verified facts","Named at least one identity/age claim","Named at least one behavioral or observational claim"]}
+  ],
+  missed:[
+    "No exact dates or times for any incident",
+    "No detailed description of the acts, force, penetration, threats, or secrecy",
+    "No forensic interview",
+    "No medical exam",
+    "No law enforcement referral",
+    "No safety plan documented",
+    "No documentation of the mother\u2019s reaction to the disclosure",
+    "No collateral interviews with Riley E. or Ms. P.",
+    "No inquiry about other possible victims",
+    "No use of the child\u2019s own body terminology"
+  ],
+  lesson:"A disclosure is the beginning of an investigation, not the end. Preserve the child\u2019s exact words, avoid suggestive questioning, and immediately arrange a forensic interview, medical exam, safety planning, and law enforcement coordination."
+},
+
+{
+  id:2,
+  title:"The Parent Contact",
+  subtitle:"Engaging the Non-Offending Caregiver",
+  intro:"After Jordan\u2019s disclosure, a worker contacted her mother. Read the contact note, answer the questions, then review what was missed.",
+  briefing:[
+    "After Jordan\u2019s disclosure, a worker contacted her mother, <b>Dana R.</b> The worker provided a pamphlet and business card, asked whether Jordan had any tribal heritage (mother said \u201csome, but not sure what kind, not enrolled\u201d), and obtained two collateral names.",
+    "The worker did not interview the mother further because another investigator had just completed an interview with her. The note does not record whether the mother was told about the disclosure, what she said, or what safety plan was made."
+  ],
+  keyFacts:[
+    "Mother: Dana R.",
+    "Tribal heritage: \u201csome, not enrolled\u201d",
+    "Two collaterals named but not described",
+    "No record of mother being told about the disclosure",
+    "No safety plan documented"
+  ],
+  questions:[
+    {type:"mc", q:"What is the most significant omission in this parent contact?",
+     options:["Not asking about tribal heritage","Not recording the mother\u2019s understanding of the disclosure and her reaction","Not providing a business card","Not asking for collateral names"], correct:1,
+     explain:"The mother\u2019s understanding, observations, protective capacity, and reaction are central to safety planning and case decisions. The note omits all of this."},
+    {type:"mc", q:"The worker deferred to another investigator who had just interviewed the mother. What is the risk?",
+     options:["None","The disclosure may never be discussed with the mother, leaving her uninformed and unable to protect the child","The mother may be angry","The worker may be late"], correct:1,
+     explain:"Coordination between investigators must not result in the disclosure never being discussed with the caregiver. The parent must understand the allegation and participate in a safety plan."},
+    {type:"text", q:"Write three questions you would ask the mother after a child discloses abuse by a sibling.",
+     model:"Model answers: \u201cWhat is your understanding of what Jordan said?\u201d \u201cWhat have you observed in Jordan recently?\u201d \u201cWhat is your plan to keep Jordan safe tonight?\u201d \u201cWho supervises when Tyler visits?\u201d \u201cDo you consent to a forensic interview and medical exam?\u201d"}
+  ],
+  missed:[
+    "Mother\u2019s understanding of the disclosure",
+    "Mother\u2019s observations of the child",
+    "Mother\u2019s reaction and protective capacity",
+    "Safety plan for the child",
+    "Consent for forensic interview and medical exam",
+    "Tyler\u2019s visitation schedule and supervision",
+    "Follow-up on tribal heritage and possible ICWA eligibility",
+    "Written notice to the parent"
+  ],
+  lesson:"Parent contact after a disclosure must include the parent\u2019s understanding, observations, protective capacity, and a documented safety plan. Coordination with other investigators must not result in the disclosure never being discussed."
+},
+
+{
+  id:3,
+  title:"The Daycare Report",
+  subtitle:"Initial Response to an Allegation in a Child-Care Setting",
+  intro:"You are the responding officer. A 5-month-old was picked up from an in-home daycare; the parent later found a suspected pubic hair in the diaper. Read the initial report, answer the questions, then review what was missed.",
+  briefing:[
+    "A 5-month-old infant, <b>Nora W.</b>, was picked up from <b>Little Acorns Home Daycare</b> at <b>1420 Oak Street, Millbrook</b>, at about 3:00 p.m. on <b>September 7</b>. About an hour later, at the family\u2019s temporary residence, the mother, <b>Megan T.</b>, changed Nora\u2019s diaper after a bowel movement and found what she believed was a pubic hair. She also noted redness and what she described as a \u201cdilated\u201d rectum.",
+    "She took the item to a shelter staff member, who called authorities. A police officer collected the suspected hair in a wet towelette inside a zip-lock bag and secured it as evidence. DHS workers viewed the child and noted redness but did not find it suspicious.",
+    "Two medical exams\u2014one by the family physician and one by a SANE doctor\u2014found no physical trauma and identified a yeast infection. A later document states a doctor compared the item to a human hair and said it was a fiber, not hair. The officer\u2019s report states there was no physical evidence to substantiate sexual abuse."
+  ],
+  keyFacts:[
+    "Infant: Nora W., 5 months old",
+    "Mother: Megan T.",
+    "Daycare: Little Acorns Home Daycare, 1420 Oak Street, Millbrook",
+    "Suspected item: possible pubic hair, later described as a fiber",
+    "Two medical exams: no trauma, yeast infection",
+    "No lab testing documented",
+    "No daycare staff interviews documented"
+  ],
+  questions:[
+    {type:"mc", q:"Two medical exams found no trauma and a yeast infection. What does that establish?",
+     options:["Abuse definitely did not occur","No physical trauma was found, but a normal exam does not rule out inappropriate touching","The mother lied","The daycare is innocent"], correct:1,
+     explain:"A normal exam rules out visible physical trauma, not all contact. The medical report itself may include an explicit caveat that a normal exam does not rule out inappropriate touching."},
+    {type:"mc", q:"The suspected \u201chair\u201d was later described as a \u201cfiber.\u201d What should have been done to resolve this definitively?",
+     options:["Ask the mother again","Submit the item to a forensic lab for examination and possible DNA testing","Throw it away","Ask the daycare provider"], correct:1,
+     explain:"A visual comparison is not a forensic identification. The item should have been submitted to a laboratory for analysis and possible DNA testing."},
+    {type:"mc", q:"Which of the following was NOT documented in the officer\u2019s initial report?",
+     options:["The time the mother picked up the child","The name of every daycare staff member on duty and who changed the diaper","The redness observed by DHS","The doctor\u2019s findings"], correct:1,
+     explain:"The report documents times, DHS observations, and medical findings but does not identify all daycare staff on duty or who changed the diaper."},
+    {type:"text", q:"List five people the officer should have interviewed before leaving the scene.",
+     model:"Model answers: the mother; shelter staff who handled the item; the daycare provider; every daycare staff member on duty that day; other parents whose children attended the daycare; the doctor(s).",
+     selfCheck:["Named specific people by role","Included the child\u2019s caregiver","Included the provider and staff on duty","Included a medical or lab contact"]},
+    {type:"branch",
+     q:"You are the responding officer. Before leaving the daycare, what is your highest priority?",
+     options:[
+       {text:"Ask the mother to confront the daycare provider directly", correct:false,
+        consequence:"Confrontation contaminates witness accounts, tips off a suspect, and can be used to challenge the mother\u2019s credibility. The daycare may also destroy records."},
+       {text:"Interview every daycare staff member on duty and identify who changed the diaper", correct:true,
+        consequence:"This preserves untainted statements, identifies everyone with access, and locks in the timeline while memories are fresh."},
+       {text:"Confiscate all diapers at the daycare", correct:false,
+        consequence:"Seizing unrelated diapers exceeds the scope of the allegation, may be inadmissible, and can be challenged as overreach."},
+       {text:"Wait for lab results before interviewing anyone", correct:false,
+        consequence:"Delay lets suspects coordinate stories and dispose of evidence. Interviews should begin immediately."}
+     ]}
+  ],
+  missed:[
+    "Forensic lab testing of the suspected hair/fiber",
+    "DNA comparison or elimination samples",
+    "Interviews with every daycare staff member on duty",
+    "Interviews with other parents and children at the daycare",
+    "Documentation of who had access to the diaper bag",
+    "DHS daycare licensing notification and inspection",
+    "Detailed chain-of-custody documentation",
+    "Photographs of the item in place",
+    "Interviews with shelter staff who handled the item",
+    "Medical follow-up plan for the yeast infection"
+  ],
+  lesson:"A normal medical exam is not proof that nothing happened. Physical evidence\u2014especially a suspected hair\u2014must be forensically tested. Interview everyone with access to the child and the diaper bag. Notify licensing. Document chain of custody."
+},
+
+{
+  id:4,
+  title:"The Husband",
+  subtitle:"Interviewing a Household Member with Potential Access",
+  intro:"You are the investigator. The daycare provider\u2019s husband has agreed to an interview. Read his account, answer the questions, then review what was missed.",
+  briefing:[
+    "A child welfare investigator and a daycare licensing specialist interviewed <b>David M.</b>, the husband of the daycare provider, at the daycare home. David said he works at a distribution warehouse, 4 days on and 2 days off, leaves at 5:30 a.m. and returns at 8:00\u20138:30 p.m., does not come home for lunch, and clocks in and out.",
+    "He provided a color-coded calendar showing his August days off: 5, 6, 11, 12, 17, 18, 23, 24, 29, and 30. He said he does not help care for daycare children and has never changed a daycare child\u2019s diaper. He said he has never substituted as a provider.",
+    "He mentioned a prior complaint from a parent who thought a child\u2019s finger was broken at the daycare. The interview is paraphrased."
+  ],
+  keyFacts:[
+    "David M., husband of the daycare provider",
+    "Works 4 days on, 2 days off; leaves 5:30 a.m., returns 8:00\u20138:30 p.m.",
+    "August days off: 5, 6, 11, 12, 17, 18, 23, 24, 29, 30",
+    "Denies caring for daycare children or changing diapers",
+    "Prior complaint about a child\u2019s finger",
+    "Schedule not independently verified in the record"
+  ],
+  questions:[
+    {type:"mc", q:"David\u2019s work schedule is potentially relevant to opportunity. What should the investigator do to verify it?",
+     options:["Accept it","Request timecards or employer attendance records and confirm with a supervisor","Ask his wife","Check his calendar"], correct:1,
+     explain:"A self-reported schedule is not verification. Timecards, employer records, or supervisor confirmation are needed to establish presence or absence."},
+    {type:"mc", q:"David says he never changes diapers. Which question best tests that claim without being confrontational?",
+     options:["\u201cAre you lying?\u201d","\u201cWalk me through a typical morning when you are home and a child needs changing.\u201d","\u201cWhy don\u2019t you change diapers?\u201d","\u201cDid you abuse the baby?\u201d"], correct:1,
+     explain:"Open-ended, behavior-focused questions test a claim without confrontation. They invite a narrative that can be compared to other evidence."},
+    {type:"mc", q:"The prior \u201cfinger\u201d complaint is mentioned. Why does it matter?",
+     options:["It proves abuse","It provides context about the daycare\u2019s history and possible bias or motive in reporting","It is irrelevant","It shows David is violent"], correct:1,
+     explain:"Prior complaints are context. They can reveal patterns, biases, or motives, but they do not by themselves prove abuse."},
+    {type:"text", q:"List three documents you would request to verify David\u2019s presence and role at the daycare.",
+     model:"Model answers: timecards or employer attendance records; the daycare\u2019s attendance log; the daycare\u2019s substitute-provider records; licensing records listing household members; his work supervisor contact."}
+  ],
+  missed:[
+    "Independent verification of his work schedule",
+    "Questions about access to diaper-changing areas",
+    "Questions about whether he was ever alone with a child",
+    "Details of the prior finger complaint",
+    "Criminal history check",
+    "Full household composition and visitor access",
+    "Documentation of his demeanor and exact words"
+  ],
+  lesson:"A denial is not verification. Test claims with open-ended questions and independent records. Schedule, access, and opportunity must be documented, not assumed."
+},
+
+{
+  id:5,
+  title:"The Provider",
+  subtitle:"Interviewing the Child-Care Provider",
+  intro:"You are the investigator. The daycare provider has agreed to an interview. Read her account, answer the questions, then review what was missed.",
+  briefing:[
+    "A child welfare investigator interviewed <b>Rachel M.</b>, the daycare provider, at 10:05 a.m. Rachel said the only prior problem was an August 22 complaint about a child\u2019s finger. She said she is the only adult in the home except her husband sometimes in the mornings on his day off, and he does not care for the children. She said she bathes, feeds, and changes the children; she cannot get her husband to change their own children\u2019s diapers.",
+    "Parents bring diapers: one mother brings a package, another brought a full bag of diapers and formula. Diapers are kept in the living room closet; she changes diapers on the sofa with a plastic mat. She said she has had one prior Child Welfare contact initiated by an ex-husband.",
+    "The worker told her the allegation was possible sexual abuse. She denied any knowledge. In a joint interview, the worker told the couple the child had been examined and there was no indication of sexual abuse; a doctor said the \u201chair\u201d was a fiber. The worker said the husband was at work on the date in question. Rachel requested the daycare be closed on September 20."
+  ],
+  keyFacts:[
+    "Provider: Rachel M.",
+    "Diaper routine: on sofa, plastic mat, diapers in living room closet",
+    "Husband sometimes home in mornings on day off",
+    "Prior finger complaint on August 22",
+    "Provider requested closure on September 20",
+    "Investigator told provider there was \u201cno indication of sexual abuse\u201d"
+  ],
+  questions:[
+    {type:"mc", q:"The worker told the provider the child had been examined and there was no indication of sexual abuse. What is the problem with that statement?",
+     options:["Nothing","It may prematurely close the investigation and discourage further disclosure or evidence collection","It is too technical","It violates HIPAA only"], correct:1,
+     explain:"Reassuring a suspect that no abuse was found can prematurely close the investigation, discourage cooperation, and be inconsistent with a normal exam that does not rule out touching."},
+    {type:"mc", q:"Which record would best help establish who changed the infant\u2019s diaper on the day in question?",
+     options:["The provider\u2019s calendar","A diaper-change log or attendance record","The husband\u2019s timecard","The mother\u2019s statement"], correct:1,
+     explain:"A contemporaneous diaper-change log or attendance record is the best evidence of who provided care and when."},
+    {type:"mc", q:"Rachel says she is the only adult who cares for the children. What should the investigator ask to test that?",
+     options:["\u201cAre you sure?\u201d","\u201cWho else has been in the home during daycare hours? Who has access to the diaper bag and the changing area?\u201d","\u201cDo you have a license?\u201d","\u201cWhy did you close?\u201d"], correct:1,
+     explain:"Access questions are more useful than challenging the provider\u2019s honesty. They establish who could have had contact with the child or the diaper bag."},
+    {type:"text", q:"List five questions you would ask Rachel about the specific day in question.",
+     model:"Model answers: Who changed Nora\u2019s diaper that day? What time? Where exactly? Who else was in the home? Was the diaper bag ever left unattended? Did you notice any redness? Did Nora seem uncomfortable? Who else had access to the living room closet?"}
+  ],
+  missed:[
+    "Specific timeline for the day in question",
+    "Who changed the diaper and when",
+    "Access by other adults",
+    "Other children\u2019s records and condition",
+    "Diaper bag handling and storage",
+    "Licensing inspection history and complaint records",
+    "Closure process and parent notification",
+    "Preservation of attendance and diaper-change records"
+  ],
+  lesson:"A provider\u2019s routine account is a starting point. Pin down the specific day, the specific people, and the specific access. Do not prematurely reassure a suspect or close an investigation based on a preliminary medical opinion."
+},
+
+{
+  id:6,
+  title:"The Medical Exam",
+  subtitle:"Reading and Using Medical Findings",
+  intro:"You are the investigator reviewing a medical exam report. Read the findings, answer the questions, then review what was missed.",
+  briefing:[
+    "<b>Dr. Helen Voss</b> examined the 5-month-old. Her report stated: abdominal exam normal; vaginal area and hymen normal with no tears; anus not stretched, good muscle tone; extremities normal; skin has a red rash on the buttocks consistent with a yeast infection; neuro normal; child smiling and happy.",
+    "Assessment: normal 5-month-old exam with no obvious signs of damage to the genital area. \u201cThis does not rule out inappropriate touching by another person.\u201d Plan: DHS notified; child released with mother. The report is signed and dated."
+  ],
+  keyFacts:[
+    "Examiner: Dr. Helen Voss",
+    "Findings: no tears, no trauma, normal tone, yeast infection",
+    "Explicit caveat: normal exam does not rule out inappropriate touching",
+    "No forensic samples documented in this report",
+    "Child released to mother"
+  ],
+  questions:[
+    {type:"mc", q:"The report says the exam is normal but \u201cdoes not rule out inappropriate touching.\u201d What does that mean for the investigation?",
+     options:["The investigation should close","The medical finding is one piece of evidence and does not by itself prove or disprove abuse","The doctor is unsure","The child was abused"], correct:1,
+     explain:"Medical findings are one piece of evidence. A normal exam rules out visible trauma, not all contact. The investigation must continue based on other evidence."},
+    {type:"mc", q:"Which of the following is a question the investigator should ask the doctor?",
+     options:["\u201cDo you think the mother is lying?\u201d","\u201cWere any cultures, photos, or forensic samples taken, and were they submitted to a lab?\u201d","\u201cCan you tell who did it?\u201d","\u201cIs the child safe?\u201d"], correct:1,
+     explain:"The investigator needs to know what forensic steps were taken, whether samples were preserved, and whether lab testing is pending."},
+    {type:"mc", q:"Why is it important to document the doctor\u2019s exact caveat rather than just \u201cnormal exam\u201d?",
+     options:["It is not important","It preserves the limitation of the finding and prevents overstating the evidence","It makes the report longer","It protects the doctor"], correct:1,
+     explain:"The caveat is part of the finding. Omitting it can lead to overstating the medical evidence in reports or court."},
+    {type:"text", q:"In one paragraph, explain to a non-medical investigator what this exam does and does not establish.",
+     model:"Model answer: The exam found no physical trauma and identified a yeast infection as the cause of redness. It does not establish that abuse occurred, and it does not rule out touching that leaves no physical marks. The suspected hair was not examined in this report; forensic testing would be separate."}
+  ],
+  missed:[
+    "Forensic sample collection and lab submission",
+    "Photographic or colposcopic documentation",
+    "Cultures or STI testing",
+    "Source of the history provided to the doctor",
+    "Follow-up plan and coordination with DHS",
+    "Chain of custody for any evidence"
+  ],
+  lesson:"Medical findings must be reported precisely. \u201cNormal exam\u201d is not \u201cno abuse.\u201d Document caveats, request forensic testing, and coordinate with the medical provider on follow-up."
+},
+
+{
+  id:7,
+  title:"The Drug House",
+  subtitle:"Child Safety in a Drug/Alcohol Investigation",
+  intro:"You are the investigator. A mother reported alcohol and marijuana at a neighbor\u2019s house where minors were present. Read the narrative, answer the questions, then review what was missed.",
+  briefing:[
+    "A mother, <b>Sharon N.</b>, told police she was concerned about drinking and marijuana at her neighbor <b>Patricia W.</b>\u2019s house. Her 13-year-old daughter, <b>Marisol M.</b>, had stayed there and reported teenagers drinking and smoking marijuana.",
+    "When Sharon picked up Marisol, she smelled alcohol on the breath of Patricia\u2019s 15-year-old daughter, <b>Lena S.</b>, saw what she believed was marijuana, and was told by Patricia that Patricia \u201cgot it for them.\u201d Marisol said Patricia borrowed $10, bought a bottle of Everclear, and that Lena invited teenagers over and offered Marisol marijuana, which she refused.",
+    "The narrative also contains an undeveloped reference to \u201cthe same night that Lena reported that she had gotten raped.\u201d A second neighbor, <b>Alma C.</b>, reported that Patricia had offered her 14-year-old son Kyle pain pills. Police used Alma\u2019s house for an undercover operation; a cooperating adult purchased one pill that appeared to be Lortab. Later, an undercover officer purchased more pills.",
+    "Patricia was given Miranda, signed a consent search, and two minors\u2014Lena and her 12-year-old sister\u2014were taken into protective custody and released to their grandmother. The decision to apply for an arrest warrant was made."
+  ],
+  keyFacts:[
+    "Patricia W., neighbor; daughters Lena S. (15) and a 12-year-old",
+    "Sharon N., reporting mother; daughter Marisol M. (13)",
+    "Alma C., neighbor; son Kyle C. (14)",
+    "Undeveloped reference to Lena reporting rape",
+    "Undercover purchase of a Lortab-type pill",
+    "Minors taken into protective custody and released to grandmother",
+    "Arrest warrant decision made"
+  ],
+  questions:[
+    {type:"mc", q:"The narrative contains a reference to Lena reporting she was raped. What should the investigator do?",
+     options:["Ignore it because it is undeveloped","Treat it as a separate serious allegation requiring immediate follow-up, forensic interview, medical exam, and documentation","Ask Patricia about it only","Mention it in court without follow-up"], correct:1,
+     explain:"An undeveloped reference to a serious allegation must be run down immediately. It requires a forensic interview, medical evaluation, and documentation."},
+    {type:"mc", q:"Minors were present during drug sales. Which question is most important for child safety?",
+     options:["\u201cDid they buy drugs?\u201d","\u201cWere the children present during sales, were they exposed to drugs or alcohol, and what is the safety plan?\u201d","\u201cWho is the grandmother?\u201d","\u201cHow much money was seized?\u201d"], correct:1,
+     explain:"Child safety requires assessing exposure and creating a safety plan, not just documenting the drug transaction."},
+    {type:"mc", q:"The controlled buy involved a cooperating adult. What documentation is essential?",
+     options:["Only the officer\u2019s memory","Recording, serial numbers of bills, chain of custody, lab submission of the pill, and the cooperating person\u2019s written statement","A photo of the house","The neighbor\u2019s phone number"], correct:1,
+     explain:"Controlled buys require a recording, documented bills, chain of custody, lab analysis, and a written statement from the cooperating person."},
+    {type:"text", q:"List five questions you would ask about the undeveloped rape reference.",
+     model:"Model answers: When did Lena report it? To whom? What exactly did she say? Was a forensic exam done? Was law enforcement notified? Is there a suspect? Is she safe? Was a report taken?"}
+  ],
+  missed:[
+    "Follow-up on the undeveloped rape allegation",
+    "Forensic interviews of the minors",
+    "Medical exams for the minors",
+    "Lab testing of the purchased pill",
+    "Complete documentation of the controlled buy",
+    "Safety plan for the children",
+    "School notification",
+    "Full household composition",
+    "Assessment of children\u2019s exposure to drug sales"
+  ],
+  lesson:"Undeveloped references to serious allegations must be run down immediately. Minors in drug-involved homes require forensic interviews, medical evaluation, and safety planning\u2014not just protective custody."
+},
+
+{
+  id:8,
+  title:"The Offense Report",
+  subtitle:"Evidence, Chain of Custody, and Follow-Through",
+  intro:"You are the investigator reviewing a detailed offense report from a drug investigation. Read the report, answer the questions, then review what was missed.",
+  briefing:[
+    "A detailed offense report by the same officer records two controlled buys by a cooperating adult and two by an undercover investigator. The first buy: $100 provided, $80 returned, one blue tablet marked \u201cWatson 540.\u201d The second: $80 provided, $60 returned, two blue tablets. The third: $40 provided, $30 returned, one blue tablet; a $20 bill with recorded serial number <b>BH38252429A</b> was used, and $10 change was seized.",
+    "The suspect agreed to order Lortab online under the name \u201cMatt Scott\u201d using her daughter\u2019s email. A consent search found 16 empty Lortab bottles (13 prescribed to the suspect, three to \u201cJames White,\u201d \u201cDestiny Smith,\u201d and \u201cLena Smith\u201d), a bottle filled September 2 with 120 tablets and 28 remaining, <b>$452 cash including a separate recorded $20 bill, serial number BH39282429A</b>, a notebook with online pharmacy records, a FedEx tag, a computer, the suspect\u2019s driver\u2019s license and Social Security card, an empty Combunox bottle prescribed to a 14-year-old neighbor, <b>Kira C.</b>, an empty Lortab bottle prescribed to \u201cRicky Owen,\u201d and a partially burned marijuana cigarette in the daughters\u2019 bedroom.",
+    "The suspect was Mirandized and signed a consent search. Two minors were taken into protective custody and released to their grandmother. The suspect was left at the residence without being arrested at that time."
+  ],
+  keyFacts:[
+    "Multiple controlled buys with recorded serial numbers",
+    "Third buy used $20 bill serial BH38252429A",
+    "Seized cash bundle included $20 bill serial BH39282429A",
+    "16 empty Lortab bottles; three prescribed to others",
+    "Current bottle: 120 tablets filled September 2, 28 remaining",
+    "$452 cash seized",
+    "Notebook with online pharmacy records",
+    "Computer seized",
+    "Combunox bottle prescribed to 14-year-old neighbor Kira C.",
+    "Marijuana cigarette in daughters\u2019 bedroom",
+    "Two minors placed with grandmother"
+  ],
+  questions:[
+    {type:"mc", q:"The report lists 16 empty Lortab bottles, three prescribed to people other than the suspect. What should the investigator do?",
+     options:["Ignore them","Interview the named individuals, determine how the bottles came to be in the suspect\u2019s room, and document explanations","Throw them away","Assume theft"], correct:1,
+     explain:"Each named prescription holder is a potential witness or victim. Their accounts must be documented and compared to the suspect\u2019s explanation."},
+    {type:"mc", q:"A computer was seized as used in a felony. What is the essential next step?",
+     options:["Turn it on and look at files","Obtain a warrant or consent for forensic imaging and have a trained examiner create a forensic image","Return it","Give it to the suspect"], correct:1,
+     explain:"Computers must be forensically imaged by a trained examiner under proper authority. Browsing the device directly can alter or destroy evidence."},
+    {type:"mc", q:"The report does not mention lab submission of the pills or marijuana. Why does that matter?",
+     options:["It does not","Without lab confirmation, the identity and weight of the controlled substance may be challenged","The pills are obvious","Lab tests are optional"], correct:1,
+     explain:"Lab confirmation establishes the identity and weight of the controlled substance, which is essential for charging and prosecution."},
+    {type:"text", q:"Create a 10-item evidence log from the report, including item, location found, and any serial number.",
+     model:"Model answer (any 10): 1. Blue tablet \u201cWatson 540\u201d \u2013 first buy. 2. Two blue tablets \u2013 second buy. 3. One blue tablet \u2013 third buy. 4. $10 change (one $5, five $1). 5. $452 cash including $20 bill BH39282429A. 6. Notebook with online pharmacy records. 7. Second tablet with online pharmacy records. 8. FedEx tag. 9. Computer and components. 10. Driver\u2019s license and Social Security card. 11. Empty Combunox bottle (Kira C.). 12. Empty Lortab bottle (Ricky Owen). 13. Partially burned marijuana cigarette. 14. 16 empty Lortab bottles."},
+    {type:"priority",
+     q:"Rank the following initial-response actions in priority order (1 = highest).",
+     items:[
+       "Ensure the minors are safe and custody is documented",
+       "Preserve physical evidence (pills, cash, computer)",
+       "Notify DHS and request a child forensic interview",
+       "Conduct the forensic interview with a trained interviewer"
+     ],
+     order:[0,1,2,3],
+     explain:"Safety first, then preservation, then DHS coordination, then the formal forensic interview (which happens at a child-advocacy center)."}
+  ],
+  missed:[
+    "Lab submission and analysis of the pills and marijuana",
+    "Forensic imaging of the computer",
+    "Interviews with the named prescription holders",
+    "Interview with the neighbor family about the stolen medication",
+    "Full forensic interviews of the minors",
+    "Final charging decision",
+    "Documentation of the \u201cJames White\u201d relationship"
+  ],
+  lesson:"Detailed offense reports still have gaps. Every item seized needs a lab or forensic step, every named person needs an interview, and every child in the home needs a forensic interview and safety plan."
+},
+
+{
+  id:9,
+  title:"The Domestic Arrest",
+  subtitle:"Children Present During Domestic Violence",
+  intro:"You are the responding officer. A domestic abuse call resulted in an arrest. A baby was present during the altercation. Read the report, answer the questions, then review what was missed.",
+  briefing:[
+    "Officers responded to a domestic abuse call at an apartment. A male, <b>Joseph P.</b>, was detained. Two females were present: <b>Christina P.</b> (mother-in-law) and <b>Kristin P.</b> (wife). Christina said Joseph and Kristin argued over Joseph\u2019s sister visiting. Joseph was holding the baby and trying to leave; Kristin locked the door. Christina said Joseph pushed Kristin while holding the baby; Christina hit Joseph several times and scratched his neck.",
+    "Kristin told another officer that Joseph yelled, threatened to \u201cwhip their asses,\u201d picked up the baby, refused to put him down, struck Christina, and later grabbed and struck Kristin. Joseph was arrested for domestic abuse. Injuries were photographed. A baby was present/handled during the altercation. The report does not state whether DHS was notified, whether the baby was examined, or whether the baby was injured."
+  ],
+  keyFacts:[
+    "Joseph P. arrested for domestic abuse",
+    "Kristin P., wife; Christina P., mother-in-law",
+    "Baby present and held during the altercation",
+    "Injuries photographed",
+    "No DHS notification documented",
+    "No baby medical exam documented"
+  ],
+  questions:[
+    {type:"mc", q:"A baby was held during the altercation. What is the most important immediate question?",
+     options:["\u201cWho started it?\u201d","\u201cWas the baby injured or dropped, where is the baby now, and who will care for the baby tonight?\u201d","\u201cWho owns the apartment?\u201d","\u201cWas alcohol involved?\u201d"], correct:1,
+     explain:"The baby\u2019s safety is the priority. Assess injury, current location, and caregiver."},
+    {type:"mc", q:"The report does not state whether DHS was notified. Why does that matter?",
+     options:["It does not","A child was present during violence and may need a safety plan and child-welfare assessment","DHS always investigates","It is the officer\u2019s choice"], correct:1,
+     explain:"A child present during domestic violence is a child-welfare concern. DHS should be notified and a safety plan documented."},
+    {type:"mc", q:"Which of the following is a documentation gap in this report?",
+     options:["It names the officers","It does not include a full medical evaluation of the baby or a DHS referral","It includes photos","It includes statements"], correct:1,
+     explain:"The report documents the arrest and injuries but not the baby\u2019s medical evaluation or a DHS referral."},
+    {type:"text", q:"Write four questions you would ask to assess the baby\u2019s safety and four referrals you would make.",
+     model:"Model questions: Who was holding the baby when the hitting started? Was the baby dropped or struck? Where is the baby now? Who will care for the baby tonight? Model referrals: DHS hotline; victim advocate; protective order; medical exam for the baby if indicated."}
+  ],
+  missed:[
+    "Baby\u2019s medical examination",
+    "DHS notification",
+    "Child safety plan",
+    "Neighbor and witness interviews",
+    "Prior domestic-violence history",
+    "Weapons check",
+    "Alcohol/drug assessment",
+    "Full written statements from all parties",
+    "Victim advocate contact"
+  ],
+  lesson:"When a child is present during domestic violence, the child is a victim too. Assess injury, safety, and custody; notify DHS; document a safety plan. An arrest is not the end of the investigation."
+},
+
+{
+  id:10,
+  title:"The Contradiction Matrix",
+  subtitle:"Organizing Conflicting Statements",
+  intro:"You are the investigator. Four people gave conflicting accounts of a domestic disturbance. Read the statements, answer the questions, then review what was missed.",
+  briefing:[
+    "Officers responded to a domestic disturbance. Four people gave statements: <b>Lisa H.</b>, her husband <b>Mark H.</b>, Mark\u2019s brother <b>Douglas H.</b>, and Lisa\u2019s cousin <b>Bobby R.</b> Lisa said Mark became angry that she went to a nearby city with Bobby; Douglas barged in, pushed her, and hit Bobby; Mark pushed her into another room and slapped her; Mark took the phones.",
+    "Mark said Lisa left with Bobby, returned, and told him not to tell anyone where they had been; Lisa pulled the phone out of the wall; Lisa pushed him, hit him with the phone cord, punched and kicked him, and tried to choke him; he took the children to a relative\u2019s house. Bobby said Douglas punched him in the head and Mark slapped Lisa. Douglas said Bobby pulled a 6-inch knife on him and Lisa threw a phone at him.",
+    "Neighbor children were present during the altercation. Officers noted a marijuana odor and conflicting denials. Injuries were photographed. The report contains a time of \u201c2609 hours\u201d and inconsistent DOBs for Mark."
+  ],
+  keyFacts:[
+    "Four conflicting statements: Lisa, Mark, Douglas, Bobby",
+    "Knife allegation by Douglas against Bobby",
+    "Neighbor children present",
+    "Marijuana odor noted; conflicting denials",
+    "Injuries photographed",
+    "Time and DOB inconsistencies in the report"
+  ],
+  questions:[
+    {type:"mc", q:"Four people give conflicting accounts. What is the best tool to organize the evidence?",
+     options:["Pick the most credible person","Build a contradiction matrix comparing each person\u2019s account on key points","Ignore the conflict","Arrest everyone"], correct:1,
+     explain:"A contradiction matrix organizes conflicts by point and person, making gaps and corroboration opportunities visible."},
+    {type:"mc", q:"Douglas says Bobby pulled a knife. What should the investigator do?",
+     options:["Ignore it because no one else mentions it","Attempt to locate and photograph the knife, interview witnesses, and document the allegation","Ask Bobby if he did it","Drop the charge"], correct:1,
+     explain:"An allegation of a weapon must be investigated, even if uncorroborated. Locate, photograph, and document."},
+    {type:"mc", q:"Neighbor children were present. What is the priority?",
+     options:["Charge the adults","Interview the children appropriately, notify their parents, and assess their safety and exposure","Ignore them","Send them home"], correct:1,
+     explain:"Children who witnessed violence need appropriate interviews, parental notification, and a safety assessment."},
+    {type:"text", q:"Build a four-row, four-column contradiction matrix for who hit first, the knife, the children\u2019s location, and the phones.",
+     model:"Model answer: Rows: Lisa, Mark, Bobby, Douglas. Columns: who hit first; knife; children\u2019s location; phones. Lisa: Douglas hit Bobby first; no knife mentioned; Mark took children; Mark took phones. Mark: Lisa pushed him first; no knife; he took children to relative; Lisa pulled phone from wall. Bobby: Douglas punched him first; no knife; not mentioned; not mentioned. Douglas: he flipped Bobby\u2019s hat; Bobby pulled knife; not mentioned; Lisa threw phone."}
+  ],
+  missed:[
+    "Knife recovery and documentation",
+    "Marijuana search and seizure",
+    "Interviews with neighbor children and parents",
+    "DHS notification",
+    "Charging decision",
+    "Correct time and DOB",
+    "Medical documentation of injuries",
+    "Separate statements read back and signed"
+  ],
+  lesson:"Conflicting statements are not a reason to give up; they are a reason to organize. Use a contradiction matrix, pursue physical evidence (knife, marijuana), and protect children who witnessed violence."
+},
+
+{
+  id:11,
+  title:"The Background Interview",
+  subtitle:"Verification and Context in Child Welfare",
+  intro:"You are the child welfare investigator. A parent gave a background interview about the domestic-violence incident. Read the account, answer the questions, then review what was missed.",
+  briefing:[
+    "A child welfare worker interviewed <b>Lisa H.</b> about the background to the domestic-violence incident. Lisa said she had lost her home daycare business and had two family deaths right before the incident. Her cousin Bobby had been living with them after his mother\u2019s death; he did not work and slept a lot.",
+    "On the day of the fight, Mark was angry that Lisa and Bobby went to a nearby city without him. Lisa said she later learned Mark had a relative pick up the children to keep them out of the fight. Lisa said she got a protective order, learned charges were being pressed against both her and Mark, turned herself in, and was released on an OR bond. She bought a trailer for $1,500 and moved out with the children.",
+    "She said there was no prior domestic violence. She said she had been on Paxil and Effexor, had weaned herself off, and had gone to Red Rock for counseling in 2000 after losing a 1-year-old to a vaccine reaction. She said she lost her daycare after Mark was stopped for DUI and possession; she called \u201cEllen\u201d and was suspended for five years. She completed a Domestic Violence Inventory with recommendations for marital counseling, parenting skills, and stress management."
+  ],
+  keyFacts:[
+    "Lisa H., parent",
+    "Lost home daycare; two family deaths",
+    "Cousin Bobby living with them",
+    "Protective order and charges against both Lisa and Mark",
+    "Medication and counseling history",
+    "Five-year daycare suspension after Mark\u2019s DUI/possession",
+    "DVI recommendations: marital counseling, parenting skills, stress management"
+  ],
+  questions:[
+    {type:"mc", q:"Lisa says there was no prior domestic violence. How should the investigator verify that?",
+     options:["Accept it","Check prior police calls, protective orders, medical records, school records, and collateral interviews","Ask Mark","Check social media"], correct:1,
+     explain:"Self-report is not verification. Prior calls, orders, and records must be checked."},
+    {type:"mc", q:"Lisa says she was suspended from daycare for five years. What should the investigator do?",
+     options:["Accept it","Verify with the licensing agency and document the record","Ignore it","Ask the children"], correct:1,
+     explain:"Licensing records can confirm the suspension and provide context for stress and financial strain."},
+    {type:"mc", q:"Lisa mentions losing a 1-year-old to a vaccine reaction. Why is this relevant?",
+     options:["It is not","It is relevant to her mental health history, grief, and stress, and should be explored sensitively with consent","It proves she is unfit","It is gossip"], correct:1,
+     explain:"Loss and grief are relevant to context and support needs. They should be explored sensitively, not used as evidence of unfitness."},
+    {type:"text", q:"List three ways you would verify Lisa\u2019s account and three questions you would ask the children.",
+     model:"Model verification: prior police calls and CAD records; prior protective orders; licensing records; medical records (with consent); collateral interviews. Model questions to children: \u201cWhat happens when Mom and Dad argue?\u201d \u201cHave you ever seen them hit each other?\u201d \u201cDo you feel safe at home?\u201d"}
+  ],
+  missed:[
+    "Verification of prior violence",
+    "Licensing records",
+    "Children\u2019s interviews",
+    "Safety plan",
+    "Medication and counseling coordination",
+    "DVI compliance tracking",
+    "Documentation of the interview date and author"
+  ],
+  lesson:"A background interview is not just context; it is a verification task. Check records, interview children appropriately, and coordinate with licensing, courts, and treatment providers."
+}
+];
+
+/* ============================================================
+   AUDIT / REDLINE LAB DATA
+   ============================================================ */
+const AUDIT_LAB = {
+  id:"audit",
+  title:"Report Audit / Redline Lab",
+  subtitle:"Flag flawed sentences · Score against rubric · Draft corrected narrative",
+  intro:"The following is a raw, flawed incident report. Click each sentence you believe is deficient. Then score the report against the four rubric dimensions and draft a corrected supplemental narrative. Reveal the model audit key at the end to compare.",
+  report:[
+    {id:"r1", text:"The officer went to the daycare on September 7 about a baby.", flaw:"Vague time, no address, no specific allegation, no author block."},
+    {id:"r2", text:"The mother said she found a hair and thought it was from someone.", flaw:"No verbatim quote; 'a hair' is ambiguous; suspected pubic hair is not named; no chain-of-custody detail."},
+    {id:"r3", text:"The officer took the hair and put it in a bag.", flaw:"No description of packaging (wet towelette, zip-lock), no seal, no initials, no evidence log entry."},
+    {id:"r4", text:"Two doctors looked at the baby and said she was fine.", flaw:"No names, findings, or caveats; omits the 'normal exam does not rule out inappropriate touching' limitation."},
+    {id:"r5", text:"The daycare provider was nice and said she did not know anything.", flaw:"Demeanor is not evidence; no paraphrase or verbatim; no timeline; no other staff identified."},
+    {id:"r6", text:"The husband was at work so he could not have done anything.", flaw:"Self-reported schedule not verified; no timecards or employer record."},
+    {id:"r7", text:"The officer closed the case because the doctor said there was no abuse.", flaw:"Misstates the medical finding; no DHS safety plan, no follow-up, no lab submission, no forensic interview."},
+    {id:"r8", text:"The children in the daycare were not interviewed.", flaw:"Other children with access were not interviewed; licensing was not notified; attendance records were not preserved."}
+  ],
+  rubric:[
+    {key:"facts",        label:"Facts & Quotes",             max:25, desc:"Names, dates, times, verbatim statements, source attribution"},
+    {key:"evidence",     label:"Evidence & Chain of Custody", max:25, desc:"Items, packaging, serial numbers, sealing, lab submissions"},
+    {key:"safety",       label:"Child Safety & Referrals",    max:25, desc:"DHS notification, medical exam, safety plan, forensic interview"},
+    {key:"verification", label:"Verification & Follow-Up",    max:25, desc:"Independent corroboration, records requests, pending actions"}
+  ],
+  modelKey:{
+    flags:["r1","r2","r3","r4","r5","r6","r7","r8"],
+    scores:{facts:5, evidence:3, safety:4, verification:3},
+    corrected:"On September 7 at approximately 1500 hours, the reporting officer responded to Little Acorns Home Daycare, 1420 Oak Street, Millbrook, regarding a suspected pubic hair found in the diaper of a 5-month-old infant. The mother stated verbatim, 'I changed her diaper after a bowel movement and found what looked like a pubic hair.' The officer photographed the item in place, collected it in a sterile towelette inside a sealed zip-lock bag, initialed the seal, and logged it as Item 1. Two physicians examined the child; the second, Dr. Helen Voss, documented in writing that the exam was normal and added, 'This does not rule out inappropriate touching by another person.' No forensic samples were collected; lab testing of the item is recommended. The provider and her husband were interviewed. His employment records were requested to verify his absence. DHS licensing was notified. Other daycare children were identified for forensic interview. The case remains open pending lab results, forensic interviews, and licensing review."
+  }
+};
+
+/* ============================================================
+   STATE & PERSISTENCE
+   ============================================================ */
+const STORAGE_KEY = 'case_doc_investigator_v2';
+let resetArmed = false;
+let resetTimer = null;
+
+const state = { current:null, answers:{}, revealed:{}, mode:'foundation', audit:{flags:{},scores:{},corrected:'',checked:false}, selfChecks:{} };
+
+function initAnswers(){
+  MODULES.forEach(m=>{
+    if(!state.answers[m.id] || !Array.isArray(state.answers[m.id]) || state.answers[m.id].length !== m.questions.length){
+      state.answers[m.id] = m.questions.map(()=>null);
+    }
+    if(!state.revealed[m.id] || !Array.isArray(state.revealed[m.id]) || state.revealed[m.id].length !== m.questions.length){
+      state.revealed[m.id] = m.questions.map(()=>false);
+    }
+  });
+  if(!state.audit || typeof state.audit !== 'object') state.audit = {flags:{},scores:{},corrected:'',checked:false};
+  if(!state.audit.flags) state.audit.flags = {};
+  if(!state.audit.scores) state.audit.scores = {};
+  if(typeof state.audit.corrected !== 'string') state.audit.corrected = '';
+  if(typeof state.audit.checked !== 'boolean') state.audit.checked = false;
+  if(!state.selfChecks || typeof state.selfChecks !== 'object') state.selfChecks = {};
+  if(!state.mode) state.mode = 'foundation';
+}
+
+function saveState(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      answers: state.answers,
+      revealed: state.revealed,
+      mode: state.mode,
+      audit: state.audit,
+      selfChecks: state.selfChecks
+    }));
+  } catch(e){ console.warn('Could not save state', e); }
+}
+
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(data.answers){
+      Object.keys(data.answers).forEach(k=>{
+        const saved = data.answers[k];
+        if(Array.isArray(saved) && state.answers[k] && saved.length === state.answers[k].length){
+          state.answers[k] = saved;
+        }
+      });
+    }
+    if(data.revealed){
+      Object.keys(data.revealed).forEach(k=>{
+        const saved = data.revealed[k];
+        if(Array.isArray(saved) && state.revealed[k] && saved.length === state.revealed[k].length){
+          state.revealed[k] = saved;
+        }
+      });
+    }
+    if(data.mode) state.mode = data.mode;
+    if(data.audit) state.audit = Object.assign(state.audit, data.audit);
+    if(data.selfChecks) state.selfChecks = data.selfChecks;
+  } catch(e){ console.warn('Could not load state', e); }
+}
+
+initAnswers();
+loadState();
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function moduleStats(m){
+  const a = state.answers[m.id] || [];
+  let answered = 0;
+  m.questions.forEach((q,i)=>{
+    const v = a[i];
+    if(v === null || v === undefined || v === '') return;
+    if(q.type === 'priority'){
+      if(Array.isArray(v) && v.length === q.items.length && v.every(x=>x!=='' && x!==null && x!==undefined)){
+        // Require unique ranks 1..N
+        const nums = v.map(Number);
+        if(new Set(nums).size === q.items.length) answered++;
+      }
+    } else {
+      answered++;
+    }
+  });
+  const total = m.questions.length;
+  return { total, answered, done: total>0 && answered===total };
+}
+
+function overallStats(){
+  let total = 0, answered = 0;
+  MODULES.forEach(m=>{
+    const s = moduleStats(m);
+    total += s.total;
+    answered += s.answered;
+  });
+  return { total, answered, pct: total ? Math.round((answered/total)*100) : 0 };
+}
+
+function isModuleDone(m){ return moduleStats(m).done; }
+function isFieldMode(){ return state.mode === 'field'; }
+
+function setMode(mode){
+  state.mode = mode;
+  saveState();
+  renderNav();
+  if(state.current === 'audit') renderAuditLab();
+  else if(state.current) renderModule(state.current);
+  else renderHome();
+}
+
+function toggleDrawer(){ document.body.classList.toggle('drawer-open'); }
+function closeDrawer(){ document.body.classList.remove('drawer-open'); }
+
+/* ============================================================
+   RENDERING
+   ============================================================ */
+const navEl = document.getElementById('nav');
+const mainEl = document.getElementById('main');
+
+function renderNav(){
+  navEl.innerHTML = '<h2>Training Modules</h2>';
+  const home = document.createElement('button');
+  home.innerHTML = '<span class="num">★</span> Start Here';
+  home.onclick = ()=>{ renderHome(); closeDrawer(); };
+  navEl.appendChild(home);
+
+  const modeRow = document.createElement('div');
+  modeRow.className = 'mode-toggle';
+  modeRow.style.margin = '8px 4px 14px';
+  modeRow.innerHTML = `
+    <button class="${state.mode==='foundation'?'active':''}" onclick="setMode('foundation')">Foundation</button>
+    <button class="${state.mode==='field'?'active':''}" onclick="setMode('field')">Field / Senior</button>`;
+  navEl.appendChild(modeRow);
+
+  MODULES.forEach(m=>{
+    const b = document.createElement('button');
+    b.dataset.id = m.id;
+    b.innerHTML = `<span class="num">${m.id}</span> <span>${m.title}</span><span class="chk">✓</span>`;
+    if(isModuleDone(m)) b.classList.add('done');
+    if(state.current === m.id) b.classList.add('active');
+    b.onclick = ()=>{ renderModule(m.id); closeDrawer(); };
+    navEl.appendChild(b);
+  });
+
+  const auditBtn = document.createElement('button');
+  auditBtn.dataset.id = 'audit';
+  auditBtn.innerHTML = '<span class="num" style="background:#123a2b;color:#9ff0c8">★</span> <span>Report Audit Lab</span><span class="chk">✓</span>';
+  if(state.current === 'audit') auditBtn.classList.add('active');
+  if(state.audit.checked) auditBtn.classList.add('done');
+  auditBtn.onclick = ()=>{ renderAuditLab(); closeDrawer(); };
+  navEl.appendChild(auditBtn);
+}
+
+function updateMobileBar(){
+  const titleEl = document.getElementById('mobile-title');
+  const progEl = document.getElementById('mobile-progress');
+  if(!titleEl || !progEl) return;
+  if(state.current === 'audit'){
+    titleEl.textContent = 'Report Audit Lab';
+    progEl.textContent = state.audit.checked ? '✓' : '—';
+    return;
+  }
+  if(state.current){
+    const m = MODULES.find(x=>x.id===state.current);
+    if(m){
+      const s = moduleStats(m);
+      titleEl.textContent = `M${m.id}: ${m.title}`;
+      progEl.textContent = `${s.answered}/${s.total}`;
+      return;
+    }
+  }
+  titleEl.textContent = 'Start Here';
+  const o = overallStats();
+  progEl.textContent = `${o.answered}/${o.total}`;
+}
+
+function renderHome(){
+  state.current = null;
+  resetArmed = false;
+  if(resetTimer){ clearTimeout(resetTimer); resetTimer = null; }
+  renderNav();
+  const o = overallStats();
+  mainEl.innerHTML = `
+    <div class="panel">
+      <span class="tag">Welcome</span>
+      <h2>Case Documentation Investigator Training</h2>
+      <p>This tool contains <b>11 redacted scenario modules</b> plus a standalone <b>Report Audit Lab</b>. Choose a trainee level below — your choice, progress, and revealed answers persist in this browser.</p>
+
+      <div class="mode-toggle" role="tablist">
+        <button class="${state.mode==='foundation'?'active':''}" onclick="setMode('foundation')">Foundation</button>
+        <button class="${state.mode==='field'?'active':''}" onclick="setMode('field')">Field / Senior</button>
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:0">
+        <b>Foundation</b> shows Key Facts up front and explanations after each answer. <b>Field / Senior</b> hides Key Facts until you finish, defers explanations, and adds prioritization and consequence prompts.
+      </p>
+
+      <div class="overall-progress">
+        <div class="row"><span>Overall Progress</span><span><b>${o.answered}</b> / ${o.total} questions answered (${o.pct}%)</span></div>
+        <div class="bar"><div class="fill" style="width:${o.pct}%"></div></div>
+      </div>
+
+      <div class="home-grid">
+        ${MODULES.map(m=>{
+          const s = moduleStats(m);
+          const cls = s.done ? 'done' : (s.answered > 0 ? 'partial' : '');
+          const label = s.done ? 'Complete' : (s.answered > 0 ? 'In progress' : 'Not started');
+          return `
+            <div class="home-card" onclick="renderModule(${m.id});closeDrawer();">
+              <div class="n">${m.id}</div>
+              <div class="t">${m.title}</div>
+              <div class="s">${m.subtitle}</div>
+              <div class="card-progress ${cls}"><span class="dot"></span><span>${s.answered} / ${s.total} · ${label}</span></div>
+            </div>`;
+        }).join('')}
+        <div class="home-card" style="border-color:var(--accent2)" onclick="renderAuditLab();closeDrawer();">
+          <div class="n" style="color:var(--accent2)">★</div>
+          <div class="t">Report Audit / Redline Lab</div>
+          <div class="s">Standalone practical: flag flaws, score against rubric, draft a corrected narrative.</div>
+          <div class="card-progress ${state.audit.checked?'done':'partial'}">
+            <span class="dot"></span>
+            <span>${state.audit.checked ? 'Audit complete' : 'Not started'}</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn danger" id="reset-btn" onclick="resetProgress()">Reset All Progress</button>
+    </div>`;
+  updateMobileBar();
+  closeDrawer();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderModule(id, opts){
+  opts = opts || {};
+  state.current = id;
+  renderNav();
+  const m = MODULES.find(x=>x.id===id);
+  if(!m) return renderHome();
+  const answers = state.answers[id];
+  const revealed = state.revealed[id];
+  const field = isFieldMode();
+  const s = moduleStats(m);
+
+  const factsHtml = m.keyFacts.map(f=>`<li>${f}</li>`).join('');
+  const briefHtml = m.briefing.map(p=>`<p>${p}</p>`).join('');
+
+  const questionsHtml = m.questions.map((q,qi)=>{
+    if(q.type === 'mc'){
+      const chosen = answers[qi];
+      const opts = q.options.map((o,oi)=>{
+        let cls='opt';
+        if(chosen!==null){
+          if(oi===q.correct) cls+=' correct';
+          else if(oi===chosen) cls+=' wrong';
+        }
+        return `<button class="${cls}" ${chosen!==null?'disabled':''} onclick="answerMC(${id},${qi},${oi})">${String.fromCharCode(65+oi)}. ${o}</button>`;
+      }).join('');
+      let fb = '';
+      if(chosen!==null){
+        if(field && !s.done){
+          fb = `<div class="feedback show ${chosen===q.correct?'good':'bad'}">${chosen===q.correct?'✔ Correct.':'✘ Not quite.'} <em style="color:var(--muted)">Explanation unlocks when you complete this module.</em></div>`;
+        } else {
+          fb = `<div class="feedback show ${chosen===q.correct?'good':'bad'}">${chosen===q.correct?'✔ Correct. ':'✘ Not quite. '}${q.explain}</div>`;
+        }
+      }
+      return `<div class="q-card" id="q-${id}-${qi}">
+        <div class="qtext">${qi+1}. ${q.q}</div>${opts}${fb}
+      </div>`;
+    }
+    if(q.type === 'branch'){
+      const chosen = answers[qi];
+      const opts = q.options.map((o,oi)=>{
+        let cls='opt';
+        if(chosen!==null){
+          if(o.correct) cls+=' correct';
+          else if(oi===chosen) cls+=' wrong';
+        }
+        return `<button class="${cls}" ${chosen!==null?'disabled':''} onclick="answerBranch(${id},${qi},${oi})">${String.fromCharCode(65+oi)}. ${o.text}</button>`;
+      }).join('');
+      let cons = '';
+      if(chosen!==null){
+        if(!field || s.done){
+          const o = q.options[chosen];
+          cons = `<div class="consequence show branch-consequence ${o.correct?'good':'bad'}"><b>${o.correct?'Outcome:':'Consequence:'}</b> ${o.consequence}</div>`;
+        } else {
+          cons = `<div class="feedback show" style="background:#12314a;border-left:3px solid var(--accent);color:var(--muted)"><em>Consequence unlocks when you complete this module.</em></div>`;
+        }
+      }
+      return `<div class="q-card" id="q-${id}-${qi}">
+        <div class="qtext">${qi+1}. <span class="pill" style="background:#3a2a12;color:#ffd9a0">Branch</span> ${q.q}</div>${opts}${cons}
+      </div>`;
+    }
+    if(q.type === 'priority'){
+      const chosen = answers[qi];
+      const ranks = (Array.isArray(chosen) && chosen.length === q.items.length) ? chosen : q.items.map(()=>'');
+      const allFilled = ranks.every(v=>v!=='');
+      const isValid = allFilled && new Set(ranks.map(Number)).size === q.items.length;
+      const rows = q.items.map((it,ii)=>{
+        let cls='priority-row';
+        if(isValid){
+          const guessedRank = parseInt(ranks[ii],10);
+          const actualRank = q.order.indexOf(ii) + 1;
+          cls += (guessedRank === actualRank) ? ' correct' : ' wrong';
+        }
+        return `<div class="${cls}">
+          <span>${it}</span>
+          <select onchange="answerPriority(${id},${qi},${ii},this.value)">
+            <option value="">–</option>
+            ${[1,2,3,4].map(n=>`<option value="${n}" ${String(ranks[ii])===String(n)?'selected':''}>${n}</option>`).join('')}
+          </select>
+        </div>`;
+      }).join('');
+      const warnHtml = (allFilled && !isValid)
+        ? `<div class="priority-warn">Each rank (1–${q.items.length}) must be used exactly once.</div>`
+        : '';
+      const showExpl = isValid && (!field || s.done);
+      const expl = showExpl ? `<div class="feedback show good priority-expl">${q.explain}</div>` : '';
+      return `<div class="q-card" id="q-${id}-${qi}">
+        <div class="qtext">${qi+1}. <span class="pill" style="background:#12314a;color:#9fd0ff">Prioritize</span> ${q.q}</div>
+        <div class="priority-list">${rows}</div>${warnHtml}${expl}
+      </div>`;
+    }
+    // text
+    const val = answers[qi] || '';
+    const sc = q.selfCheck || [];
+    const scHtml = sc.length ? `
+      <div class="self-check">
+        <div class="sc-title">Self-Check</div>
+        ${sc.map((item,si)=>{
+          const key = `sc_${id}_${qi}_${si}`;
+          const checked = state.selfChecks[key] ? 'checked' : '';
+          return `<label><input type="checkbox" ${checked} onchange="toggleSelfCheck('${key}')"> ${item}</label>`;
+        }).join('')}
+      </div>` : '';
+    return `<div class="q-card" id="q-${id}-${qi}">
+      <div class="qtext">${qi+1}. ${q.q}</div>
+      <textarea placeholder="Type your answer here..." oninput="saveText(${id},${qi},this.value)">${val}</textarea>
+      ${scHtml}
+      <button class="btn ghost" id="mb-${id}-${qi}" onclick="revealModel(${id},${qi})">${revealed[qi] ? 'Hide Model Answer' : 'Reveal Model Answer'}</button>
+      <div class="model-answer ${revealed[qi] ? 'show' : ''}" id="ma-${id}-${qi}"><strong>Model Answer:</strong> ${q.model}</div>
+    </div>`;
+  }).join('');
+
+  const missedHtml = m.missed.map(x=>`<li>${x}</li>`).join('');
+
+  const keyFactsBlock = `
+    <div class="panel" id="key-facts-${id}" ${field && !s.done ? 'style="display:none"' : ''}>
+      <span class="tag">Scenario Briefing</span>
+      <h2>Read the Record</h2>${briefHtml}
+      <div class="section-label">Key Facts ${field && !s.done ? '<em style="color:var(--muted);font-size:.75rem;text-transform:none">(unlocks when module complete)</em>' : ''}</div>
+      <ul class="facts">${factsHtml}</ul>
+    </div>`;
+
+  mainEl.innerHTML = `
+    <div class="panel">
+      <span class="tag">Module ${m.id} of 11 · ${field?'Field / Senior':'Foundation'}</span>
+      <h2>${m.title}</h2>
+      <div style="color:var(--muted);margin-bottom:8px">${m.subtitle}</div>
+      <p>${m.intro}</p>
+    </div>
+
+    ${keyFactsBlock}
+
+    <div class="panel">
+      <span class="tag">Your Investigation</span>
+      <h2>Answer the Questions</h2>
+      <div class="progress" id="progress-${id}">Progress: <b>${s.answered}</b> of ${s.total} answered ${s.done?'<span class="pill good">Complete</span>':''}</div>
+      ${questionsHtml}
+    </div>
+
+    <div class="panel">
+      <span class="tag">Debrief</span>
+      <h2>What Was Missed</h2>
+      <div class="missed"><strong style="color:var(--danger)">Gaps in the original investigation:</strong><ul>${missedHtml}</ul></div>
+      <div class="lesson"><strong style="color:var(--accent2)">Key Lesson:</strong> ${m.lesson}</div>
+      <div class="export-actions">
+        <button class="btn ghost" onclick="exportModule(${m.id})">🖨 Print / Export Summary</button>
+        <button class="btn ghost" onclick="copyModuleSummary(${m.id})">📋 Copy Summary</button>
+      </div>
+      <div class="export-panel" id="export-${id}"></div>
+      <button class="btn" style="margin-top:16px" onclick="nextModule(${m.id})">${m.id<11?'Next Module →':'Return to Start'}</button>
+    </div>
+  `;
+  updateMobileBar();
+  closeDrawer();
+  if(!opts.skipScrollTop) window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderAuditLab(){
+  state.current = 'audit';
+  renderNav();
+  const a = state.audit;
+  const flaggedCount = Object.keys(a.flags||{}).filter(k=>k.startsWith('audit_') && a.flags[k]).length;
+
+  mainEl.innerHTML = `
+    <div class="panel">
+      <span class="tag">Standalone Practical</span>
+      <h2>${AUDIT_LAB.title}</h2>
+      <div style="color:var(--muted);margin-bottom:8px">${AUDIT_LAB.subtitle}</div>
+      <p>${AUDIT_LAB.intro}</p>
+    </div>
+
+    <div class="panel">
+      <span class="tag">Step 1 · Flag Flaws</span>
+      <h2>Click every deficient sentence</h2>
+      <div id="audit-report">
+        ${AUDIT_LAB.report.map(s=>{
+          const key = `audit_${s.id}`;
+          const on = a.flags && a.flags[key];
+          return `<div class="audit-sentence ${on?'flagged':''}" id="audit-s-${s.id}" onclick="toggleAuditFlag('${s.id}')">
+            ${s.text}
+            <div class="flag-note">Flagged — ${s.flaw}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:10px">Flagged: <b id="audit-flag-count">${flaggedCount}</b> of ${AUDIT_LAB.report.length}</p>
+    </div>
+
+    <div class="panel">
+      <span class="tag">Step 2 · Score Against Rubric</span>
+      <h2>Rate the report</h2>
+      <p style="font-size:.84rem;color:var(--muted)">Enter a score from 0 to each dimension's maximum. Values are clamped automatically.</p>
+      ${AUDIT_LAB.rubric.map(r=>{
+        const val = a.scores && a.scores[r.key] != null ? a.scores[r.key] : '';
+        return `<div class="rubric-row">
+          <div><b>${r.label}</b><span class="rubric-desc">${r.desc} · max ${r.max}</span></div>
+          <input type="number" id="rubric-${r.key}" min="0" max="${r.max}" value="${val}" placeholder="0–${r.max}" oninput="setAuditScore('${r.key}', this.value)">
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="panel">
+      <span class="tag">Step 3 · Draft the Corrected Narrative</span>
+      <h2>Supplemental report</h2>
+      <p style="font-size:.84rem;color:var(--muted)">Include verbatim quotes, dates/times, serial numbers, pending lab actions, and follow-up steps.</p>
+      <textarea id="audit-corrected" style="min-height:160px" placeholder="Write your corrected supplemental narrative here..." oninput="setAuditCorrected(this.value)">${a.corrected || ''}</textarea>
+      <div class="self-check">
+        <div class="sc-title">Self-Check</div>
+        ${["Used at least one verbatim quote","Included a specific date and time","Listed any serial numbers or item identifiers","Named pending lab / forensic / follow-up actions","Noted DHS and licensing notifications"].map((it,si)=>{
+          const key = `audit_sc_${si}`;
+          const checked = a.flags && a.flags[key] ? 'checked' : '';
+          return `<label><input type="checkbox" ${checked} onchange="toggleSelfCheck('${key}')"> ${it}</label>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="panel">
+      <span class="tag">Debrief</span>
+      <h2>Compare Against the Model Audit Key</h2>
+      <button class="btn" onclick="revealAuditKey()">Reveal Model Audit Key</button>
+      <div class="audit-result ${a.checked?'show':''}" id="audit-key">
+        <p><b>Model flags:</b> All ${AUDIT_LAB.report.length} sentences contain at least one deficiency.</p>
+        <p><b>Model scores:</b> Facts ${AUDIT_LAB.modelKey.scores.facts}/25 · Evidence ${AUDIT_LAB.modelKey.scores.evidence}/25 · Safety ${AUDIT_LAB.modelKey.scores.safety}/25 · Verification ${AUDIT_LAB.modelKey.scores.verification}/25</p>
+        <p><b>Model corrected narrative:</b></p>
+        <p style="font-size:.82rem;background:#0e1922;padding:10px;border-radius:8px;white-space:pre-wrap">${AUDIT_LAB.modelKey.corrected}</p>
+      </div>
+      <div class="export-actions">
+        <button class="btn ghost" onclick="exportAudit()">🖨 Print / Export Audit Summary</button>
+        <button class="btn ghost" onclick="copyAuditSummary()">📋 Copy Audit Summary</button>
+      </div>
+      <div class="export-panel" id="export-audit"></div>
+    </div>
+  `;
+  updateMobileBar();
+  closeDrawer();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============================================================
+   ANSWER HANDLERS
+   ============================================================ */
+function updateProgressAndNav(mid){
+  const m = MODULES.find(x=>x.id===mid);
+  if(!m) return;
+  const s = moduleStats(m);
+  const prog = document.getElementById(`progress-${mid}`);
+  if(prog){
+    prog.querySelector('b').textContent = s.answered;
+    const existingPill = prog.querySelector('.pill.good');
+    if(s.done && !existingPill){
+      prog.insertAdjacentHTML('beforeend', ' <span class="pill good">Complete</span>');
+    } else if(!s.done && existingPill){
+      existingPill.remove();
+    }
+  }
+  const btn = navEl.querySelector(`button[data-id="${mid}"]`);
+  if(btn){
+    if(s.done) btn.classList.add('done');
+    else btn.classList.remove('done');
+  }
+  updateMobileBar();
+}
+
+function answerMC(mid, qi, oi){
+  state.answers[mid][qi] = oi;
+  saveState();
+
+  const m = MODULES.find(x=>x.id===mid);
+  const q = m.questions[qi];
+  const s = moduleStats(m);
+
+  // Field mode: re-render on completion so Key Facts + explanations unlock
+  if(isFieldMode() && s.done){
+    renderModule(mid);
+    return;
+  }
+
+  const card = document.getElementById(`q-${mid}-${qi}`);
+  if(!card){ updateProgressAndNav(mid); return; }
+
+  card.querySelectorAll('.opt').forEach((btn, idx)=>{
+    btn.disabled = true;
+    btn.classList.remove('correct','wrong');
+    if(idx === q.correct) btn.classList.add('correct');
+    else if(idx === oi) btn.classList.add('wrong');
+  });
+
+  let fb = card.querySelector('.feedback');
+  if(!fb){
+    fb = document.createElement('div');
+    fb.className = 'feedback';
+    card.appendChild(fb);
+  }
+  fb.className = 'feedback show ' + (oi === q.correct ? 'good' : 'bad');
+  fb.textContent = (oi === q.correct ? '✔ Correct. ' : '✘ Not quite. ') + q.explain;
+
+  updateProgressAndNav(mid);
+}
+
+function answerBranch(mid, qi, oi){
+  state.answers[mid][qi] = oi;
+  saveState();
+  renderModule(mid, {skipScrollTop:true});
+  const card = document.getElementById(`q-${mid}-${qi}`);
+  if(card) card.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function answerPriority(mid, qi, itemIndex, value){
+  const m = MODULES.find(x=>x.id===mid);
+  const q = m.questions[qi];
+  const wasDone = moduleStats(m).done;
+
+  if(!Array.isArray(state.answers[mid][qi])){
+    state.answers[mid][qi] = q.items.map(()=>'');
+  }
+  state.answers[mid][qi][itemIndex] = value;
+  saveState();
+
+  const nowDone = moduleStats(m).done;
+
+  // Completion state changed → full re-render to update Key Facts visibility + progress
+  if(nowDone !== wasDone){
+    renderModule(mid, {skipScrollTop:true});
+    const card = document.getElementById(`q-${mid}-${qi}`);
+    if(card) card.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  // In-place update of the priority card only
+  const ranks = state.answers[mid][qi];
+  const allFilled = ranks.length === q.items.length && ranks.every(v=>v!=='');
+  const isValid = allFilled && new Set(ranks.map(Number)).size === q.items.length;
+
+  const card = document.getElementById(`q-${mid}-${qi}`);
+  if(!card){ updateProgressAndNav(mid); return; }
+
+  // Row classes
+  card.querySelectorAll('.priority-row').forEach((row, ii)=>{
+    row.classList.remove('correct','wrong');
+    if(isValid){
+      const guessed = parseInt(ranks[ii],10);
+      const actual = q.order.indexOf(ii) + 1;
+      row.classList.add(guessed === actual ? 'correct' : 'wrong');
+    }
+  });
+
+  // Warning
+  let warn = card.querySelector('.priority-warn');
+  if(allFilled && !isValid){
+    if(!warn){
+      warn = document.createElement('div');
+      warn.className = 'priority-warn';
+      card.appendChild(warn);
+    }
+    warn.textContent = `Each rank (1–${q.items.length}) must be used exactly once.`;
+  } else if(warn){
+    warn.remove();
+  }
+
+  // Explanation
+  let expl = card.querySelector('.priority-expl');
+  const field = isFieldMode();
+  const s = moduleStats(m);
+  const showExpl = isValid && (!field || s.done);
+  if(showExpl){
+    if(!expl){
+      expl = document.createElement('div');
+      expl.className = 'feedback show good priority-expl';
+      card.appendChild(expl);
+    }
+    expl.textContent = q.explain;
+  } else if(expl){
+    expl.remove();
+  }
+
+  updateProgressAndNav(mid);
+}
+
+function saveText(mid, qi, val){
+  state.answers[mid][qi] = val;
+  saveState();
+  updateProgressAndNav(mid);
+}
+
+function revealModel(mid, qi){
+  state.revealed[mid][qi] = !state.revealed[mid][qi];
+  saveState();
+  const el = document.getElementById(`ma-${mid}-${qi}`);
+  if(el) el.classList.toggle('show', state.revealed[mid][qi]);
+  const btn = document.getElementById(`mb-${mid}-${qi}`);
+  if(btn) btn.textContent = state.revealed[mid][qi] ? 'Hide Model Answer' : 'Reveal Model Answer';
+}
+
+function toggleSelfCheck(key){
+  state.selfChecks[key] = !state.selfChecks[key];
+  saveState();
+}
+
+function nextModule(id){
+  if(id<11) renderModule(id+1);
+  else renderHome();
+}
+
+/* ============================================================
+   AUDIT LAB HANDLERS
+   ============================================================ */
+function toggleAuditFlag(sid){
+  const key = `audit_${sid}`;
+  state.audit.flags[key] = !state.audit.flags[key];
+  saveState();
+  const el = document.getElementById(`audit-s-${sid}`);
+  if(el) el.classList.toggle('flagged', state.audit.flags[key]);
+  const cnt = Object.keys(state.audit.flags).filter(k=>k.startsWith('audit_') && state.audit.flags[k]).length;
+  const cntEl = document.getElementById('audit-flag-count');
+  if(cntEl) cntEl.textContent = cnt;
+}
+
+function setAuditScore(key, val){
+  const r = AUDIT_LAB.rubric.find(x=>x.key===key);
+  if(!r) return;
+  if(val === ''){
+    state.audit.scores[key] = '';
+    saveState();
+    return;
+  }
+  const n = Number(val);
+  if(isNaN(n)){
+    state.audit.scores[key] = 0;
+    saveState();
+    return;
+  }
+  const clamped = Math.max(0, Math.min(r.max, Math.round(n)));
+  state.audit.scores[key] = clamped;
+  saveState();
+  if(clamped !== n){
+    const input = document.getElementById(`rubric-${key}`);
+    if(input) input.value = clamped;
+  }
+}
+
+function setAuditCorrected(val){
+  state.audit.corrected = val;
+  saveState();
+}
+
+function revealAuditKey(){
+  state.audit.checked = true;
+  saveState();
+  const el = document.getElementById('audit-key');
+  if(el) el.classList.add('show');
+  renderNav();
+}
+
+/* ============================================================
+   EXPORT / COPY / PRINT
+   ============================================================ */
+function buildModuleSummary(id){
+  const m = MODULES.find(x=>x.id===id);
+  const answers = state.answers[id] || [];
+  const lines = [];
+  lines.push(`CASE DOCUMENTATION INVESTIGATOR — MODULE ${m.id} SUMMARY`);
+  lines.push(`Title: ${m.title}`);
+  lines.push(`Mode: ${state.mode === 'field' ? 'Field / Senior' : 'Foundation'}`);
+  lines.push(`Exported: ${new Date().toISOString()}`);
+  lines.push('────────────────────────────────────────────');
+  m.questions.forEach((q,i)=>{
+    lines.push('');
+    lines.push(`Q${i+1} [${q.type}]: ${q.q}`);
+    const a = answers[i];
+    if(q.type === 'mc'){
+      lines.push(`  Selected: ${a!=null ? q.options[a] : '(unanswered)'}`);
+      lines.push(`  Correct:  ${q.options[q.correct]}`);
+      lines.push(`  Result:   ${a === q.correct ? 'CORRECT' : (a === null || a === undefined ? 'UNANSWERED' : 'INCORRECT')}`);
+    } else if(q.type === 'branch'){
+      lines.push(`  Selected: ${a!=null ? q.options[a].text : '(unanswered)'}`);
+      const correctIdx = q.options.findIndex(o=>o.correct);
+      lines.push(`  Correct:  ${q.options[correctIdx].text}`);
+      lines.push(`  Result:   ${a === correctIdx ? 'CORRECT' : (a === null || a === undefined ? 'UNANSWERED' : 'INCORRECT')}`);
+    } else if(q.type === 'priority'){
+      const isAll = Array.isArray(a) && a.length === q.items.length && a.every(x=>x!=='');
+      const isUnique = isAll && new Set(a.map(Number)).size === q.items.length;
+      lines.push(`  Ranking:  ${isAll ? a.join(' → ') : '(incomplete)'}`);
+      lines.push(`  Valid:    ${isUnique ? 'yes (unique ranks)' : 'no (duplicates or incomplete)'}`);
+      const model = q.items.map((_,idx)=>{
+        const actualRank = q.order.indexOf(idx) + 1;
+        return `${idx+1}:${actualRank}`;
+      }).join(', ');
+      lines.push(`  Model:    ${model} (item index : correct rank)`);
+    } else {
+      lines.push(`  Response: ${a || '(empty)'}`);
+      if(q.selfCheck){
+        q.selfCheck.forEach((item,si)=>{
+          const key = `sc_${id}_${i}_${si}`;
+          lines.push(`    [${state.selfChecks[key]?'x':' '}] ${item}`);
+        });
+      }
+    }
+  });
+  lines.push('');
+  lines.push(`Key lesson: ${m.lesson}`);
+  return lines.join('\n');
+}
+
+function exportModule(id){
+  const text = buildModuleSummary(id);
+  const el = document.getElementById(`export-${id}`);
+  if(el){
+    el.textContent = text;
+    el.classList.add('show');
+  }
+  setTimeout(()=>window.print(), 100);
+}
+
+function copyModuleSummary(id){
+  const text = buildModuleSummary(id);
+  const el = document.getElementById(`export-${id}`);
+  if(el){
+    el.textContent = text;
+    el.classList.add('show');
+  }
+  copyToClipboard(text);
+}
+
+function buildAuditSummary(){
+  const a = state.audit;
+  const lines = [];
+  lines.push('CASE DOCUMENTATION INVESTIGATOR — REPORT AUDIT SUMMARY');
+  lines.push(`Exported: ${new Date().toISOString()}`);
+  lines.push('────────────────────────────────────────────');
+  lines.push('');
+  lines.push('Sentence-by-sentence review:');
+  AUDIT_LAB.report.forEach(s=>{
+    const key = `audit_${s.id}`;
+    const flagged = a.flags && a.flags[key];
+    lines.push(`  ${flagged ? '[FLAGGED]' : '[       ]'} ${s.text}`);
+    lines.push(`             Flaw: ${s.flaw}`);
+  });
+  lines.push('');
+  lines.push('Rubric scores:');
+  AUDIT_LAB.rubric.forEach(r=>{
+    const val = a.scores && a.scores[r.key]!=null && a.scores[r.key]!=='' ? a.scores[r.key] : '(not scored)';
+    lines.push(`  ${r.label}: ${val} / ${r.max}`);
+  });
+  lines.push('');
+  lines.push('Corrected narrative (trainee):');
+  lines.push(a.corrected || '(empty)');
+  lines.push('');
+  lines.push('Model key scores:');
+  AUDIT_LAB.rubric.forEach(r=>{
+    lines.push(`  ${r.label}: ${AUDIT_LAB.modelKey.scores[r.key]} / ${r.max}`);
+  });
+  lines.push('');
+  lines.push('Model corrected narrative:');
+  lines.push(AUDIT_LAB.modelKey.corrected);
+  return lines.join('\n');
+}
+
+function exportAudit(){
+  const text = buildAuditSummary();
+  const el = document.getElementById('export-audit');
+  if(el){
+    el.textContent = text;
+    el.classList.add('show');
+  }
+  setTimeout(()=>window.print(), 100);
+}
+
+function copyAuditSummary(){
+  const text = buildAuditSummary();
+  const el = document.getElementById('export-audit');
+  if(el){
+    el.textContent = text;
+    el.classList.add('show');
+  }
+  copyToClipboard(text);
+}
+
+function copyToClipboard(text){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text)
+      .then(()=>showToast('✓ Copied to clipboard'))
+      .catch(()=>fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.top = '-1000px';
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch(e){ ok = false; }
+  document.body.removeChild(ta);
+  showToast(ok ? '✓ Copied to clipboard' : 'Copy failed — select the panel and copy manually');
+}
+
+function showToast(msg){
+  let t = document.getElementById('cd-toast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'cd-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#123a2b;color:#9ff0c8;padding:10px 18px;border-radius:8px;font-size:.85rem;z-index:9999;opacity:0;transition:opacity .2s;box-shadow:0 4px 12px rgba(0,0,0,.5);pointer-events:none;font-weight:600';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>{ t.style.opacity = '0'; }, 2200);
+}
+
+/* ============================================================
+   SAFE RESET (two-click)
+   ============================================================ */
+function reinitState(){
+  state.answers = {};
+  state.revealed = {};
+  state.mode = 'foundation';
+  state.audit = { flags:{}, scores:{}, corrected:'', checked:false };
+  state.selfChecks = {};
+  state.current = null;
+  initAnswers();
+}
+
+function resetProgress(){
+  const btn = document.getElementById('reset-btn');
+  if(!resetArmed){
+    resetArmed = true;
+    if(btn){
+      btn.textContent = '⚠ Click Again to Confirm Reset';
+      btn.classList.add('armed');
+    }
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(()=>{
+      resetArmed = false;
+      const b = document.getElementById('reset-btn');
+      if(b){ b.textContent = 'Reset All Progress'; b.classList.remove('armed'); }
+    }, 4000);
+    return;
+  }
+  clearTimeout(resetTimer);
+  resetArmed = false;
+  try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+  reinitState();
+  renderHome();
+}
+
+/* Boot */
+renderHome();
+</script>
+</body>
+</html>
